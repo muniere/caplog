@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+
+require 'date'
+require 'fileutils'
+require 'terminal-notifier'
+
+FORMAT = 'jpg'
+
+#
+# capture
+#
+file = DateTime.now.strftime("%Y-%m-%dT%H-%M-%S.#{FORMAT}")
+path = File.expand_path(File.join('~/Pictures/Caplog', file))
+
+unless File.directory?(File.dirname(path))
+  FileUtils.mkdir_p(File.dirname(path))
+end
+
+Process.waitpid(Process.spawn("/usr/sbin/screencapture -x -T 0 -t #{FORMAT} #{path}"))
+
+#
+# notify
+#
+TerminalNotifier.notify(path, :title => 'Caplog', :open => "file://#{File.dirname(path)}")
+
+# vim: ft=ruby sw=2 ts=2 sts=2
